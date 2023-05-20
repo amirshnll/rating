@@ -11,7 +11,9 @@ from .models import BlogPost as BlogPostModel
 class BlogPostApi(APIView):
     @method_permission_classes([IsLogginedUser, IsAuthor])
     def post(self, request):
-        blog_post_serializer = BlogPostSerializer(data=request.data)
+        data = request.data.copy()
+        data["author"] = request.user.pk
+        blog_post_serializer = BlogPostSerializer(data=data)
         if not blog_post_serializer.is_valid():
             return Response(
                 blog_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST
