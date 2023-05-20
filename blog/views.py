@@ -8,7 +8,7 @@ from .serializers import BlogPostSerializer
 from .models import BlogPost as BlogPostModel
 
 
-class StaticPageApi(APIView):
+class BlogPostApi(APIView):
     @method_permission_classes([IsLogginedUser, IsAuthor])
     def post(self, request):
         blog_post_serializer = BlogPostSerializer(data=request.data)
