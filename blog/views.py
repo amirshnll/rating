@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from user.permissions import method_permission_classes, IsAuthor, IsLogginedUser
 from .serializers import BlogPostSerializer
 from .models import BlogPost as BlogPostModel
+from django.core.paginator import Paginator
 
 
 class BlogPostApi(APIView):
@@ -61,6 +62,11 @@ class BlogPostListApi(APIView):
     @method_permission_classes([IsLogginedUser])
     def get(self, request):
         blog_post_obj = BlogPostModel.objects.all().order_by("id")
+
+        # pagination
+        paginator = Paginator(blog_post_obj, 50)
+        blog_post_obj = paginator.page(request.GET.get("page", 1))
+
         blog_post_serializer = BlogPostSerializer(
             instance=blog_post_obj, many=True
         ).data
