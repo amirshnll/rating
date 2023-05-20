@@ -6,9 +6,11 @@ from django.core.paginator import Paginator
 from user.permissions import method_permission_classes, IsLogginedUser
 from .serializers import RatingSerializer
 from .models import Rating as RatingModel
+from blog.models import BlogPost as BlogPostModel
 
 
 class RateApi(APIView):
+    # add rate to blog post
     @method_permission_classes([IsLogginedUser])
     def post(self, request):
         data = request.data.copy()
@@ -29,19 +31,9 @@ class RateApi(APIView):
         rate_serializer.save()
         return Response(rate_serializer.data, status=status.HTTP_201_CREATED)
 
-    def get(self, request, rate_id):
-        try:
-            rate_obj = RatingModel.objects.get(pk=rate_id)
-            rate_serializer = RatingModel(instance=rate_obj, many=False).data
-            return Response(rate_serializer, status=status.HTTP_200_OK)
-        except RatingModel.DoesNotExist:
-            return Response(
-                {"status": "error", "message": "the post could not be found"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
 
 class RateListApi(APIView):
+    # get all rates
     @method_permission_classes([IsLogginedUser])
     def get(self, request):
         rate_obj = RatingModel.objects.all().order_by("id")
@@ -55,7 +47,14 @@ class RateListApi(APIView):
 
 
 class TotalRatePostApi(APIView):
+    # get blog post rate average
     def get(self, request, blog_post_id):
+        if not BlogPostModel.objects.filter(pk=blog_post_id).exists():
+            return Response(
+                {"status": "error", "message": "the post could not be found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
         rate_obj = RatingModel.objects.filter(post=blog_post_id).order_by("id")
         rate_serializer = RatingSerializer(instance=rate_obj, many=True).data
         total_rate = sum(rate["value"] for rate in rate_serializer)
