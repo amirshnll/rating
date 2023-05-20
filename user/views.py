@@ -12,6 +12,7 @@ from .permissions import method_permission_classes, IsLogginedUser
 from .defs import make_auth_obj
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
+from django.conf import settings
 
 
 @method_decorator(
