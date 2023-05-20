@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.core.paginator import Paginator
 from user.permissions import method_permission_classes, IsLogginedUser
 from .serializers import RatingSerializer
 from .models import Rating as RatingModel
@@ -45,6 +45,11 @@ class RateListApi(APIView):
     @method_permission_classes([IsLogginedUser])
     def get(self, request):
         rate_obj = RatingModel.objects.all().order_by("id")
+
+        # pagination
+        paginator = Paginator(rate_obj, 50)
+        rate_obj = paginator.page(request.GET.get("page", 1))
+
         rate_serializer = RatingSerializer(instance=rate_obj, many=True).data
         return Response(rate_serializer, status=status.HTTP_200_OK)
 
