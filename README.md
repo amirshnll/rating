@@ -1,4 +1,4 @@
-# exchange
+# Rating
 
 this is a code challenge. (technical task)
 
