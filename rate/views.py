@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user.permissions import method_permission_classes, IsAuthor, IsLogginedUser
+from user.permissions import method_permission_classes, IsLogginedUser
 from .serializers import RatingSerializer
 from .models import Rating as RatingModel
 
@@ -11,7 +11,19 @@ from .models import Rating as RatingModel
 class RateApi(APIView):
     @method_permission_classes([IsLogginedUser])
     def post(self, request):
-        rate_serializer = RatingSerializer(data=request.data)
+        data = request.data.copy()
+        data["user"] = request.user.pk
+
+        if RatingModel.objects.filter(post=data["post"], user=data["user"]).exists():
+            return Response(
+                {
+                    "status": "error",
+                    "message": "you have already rated this in the past. duplicate ratings are not allowed",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        rate_serializer = RatingSerializer(data=data)
         if not rate_serializer.is_valid():
             return Response(rate_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         rate_serializer.save()
