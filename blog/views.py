@@ -40,7 +40,13 @@ class BlogPostApi(APIView):
     # update single blog post
     @method_permission_classes([IsLogginedUser])
     def put(self, request, blog_post_id):
-        blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id)
+        try:
+            blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id)
+        except BlogPostModel.DoesNotExist:
+            return Response(
+                {"status": "error", "message": "the post could not be found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         blog_post_obj.title = request.data["title"] if "title" in request.data else ""
         blog_post_obj.content = (
