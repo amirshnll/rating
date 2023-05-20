@@ -4,9 +4,9 @@ from user.defs import get_token_prefix
 import random
 
 blog_post = [
-    {"title": "amir", "content": "ij4ZqGNwx9slG0Ltq4FS"},
-    {"title": "nilo", "content": "p8VeqZOwHlQa7X2IFeY3"},
-    {"title": "hanie", "content": "yF5kScZLdQQhK4niOQw0"},
+    {"title": "content 1", "content": "this is a test 1"},
+    {"title": "content 2", "content": "this is a test 2"},
+    {"title": "content 3", "content": "this is a test 3"},
 ]
 
 
