@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     "blog.apps.BlogConfig",
     "rate.apps.RateConfig",
+    "healthcheck.apps.HealthcheckConfig"
 ]
 
 MIDDLEWARE = [
