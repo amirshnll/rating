@@ -50,11 +50,10 @@ class RateListApi(APIView):
 
 
 class TotalRatePostApi(APIView):
-    @method_permission_classes([IsLogginedUser])
     def get(self, request, blog_post_id):
         rate_obj = RatingModel.objects.filter(post=blog_post_id).order_by("id")
         rate_serializer = RatingSerializer(instance=rate_obj, many=True).data
-        total_rate = int(
-            sum(rate["value"] for rate in rate_serializer) / len(rate_serializer)
-        )
+        total_rate = sum(rate["value"] for rate in rate_serializer)
+        if total_rate > 0:
+            total_rate = int(total_rate / len(rate_serializer))
         return Response(total_rate, status=status.HTTP_200_OK)
