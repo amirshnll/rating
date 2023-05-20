@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  exchange:
+    build: .
+    container_name: rate
+    command: gunicorn exchange.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=z^*#g9q$qFMRQPbWK%nLj)Ge!T9kH*s4EMuFGWGe4a#KTXdGp%6X4jJ%pd+B
+      - DEBUG=true
+      - ADMIN_ENABLED=true
+      - AUTH_PREFIX=Bearer
+      - AUTH_HEADER_TYPES=Bearer
+
+# docker-compose build
+# docker-compose up -d
+# docker-compose down
