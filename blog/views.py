@@ -52,7 +52,7 @@ class BlogPostApi(APIView):
 
     @method_permission_classes([IsLogginedUser, IsAuthor])
     def delete(self, request, blog_post_id):
-        blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id)
+        blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id, user=request.user.pk)
         blog_post_obj.delete()
         return Response({"status": "success"}, status=status.HTTP_200_OK)
 
