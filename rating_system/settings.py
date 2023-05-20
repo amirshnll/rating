@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     "blog.apps.BlogConfig",
     "rate.apps.RateConfig",
-    "healthcheck.apps.HealthcheckConfig"
+    "healthcheck.apps.HealthcheckConfig",
 ]
 
 MIDDLEWARE = [
@@ -173,3 +173,7 @@ SIMPLE_JWT = {
 
 # token prefix
 AUTH_PREFIX = env("AUTH_PREFIX")
+
+# rate limit setup
+RATELIMIT_RATE = "20/m"
+RATELIMIT_KEY = "user"

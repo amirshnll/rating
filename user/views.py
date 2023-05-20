@@ -10,8 +10,14 @@ from .serializers import (
 )
 from .permissions import method_permission_classes, IsLogginedUser
 from .defs import make_auth_obj
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 
 
+@method_decorator(
+    ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMIT_RATE),
+    name="dispatch",
+)
 class UserApi(APIView):
     # get user
     @method_permission_classes([IsLogginedUser])
@@ -33,9 +39,7 @@ class UserApi(APIView):
             return (
                 Response(serializer.errors, status=status.HTTP_409_CONFLICT)
                 if serializer.errors.get("username")
-                else Response(
-                    serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                else Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             )
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -49,9 +53,7 @@ class UserAuthorApi(APIView):
             return (
                 Response(serializer.errors, status=status.HTTP_409_CONFLICT)
                 if serializer.errors.get("username")
-                else Response(
-                    serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                else Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             )
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -64,6 +66,9 @@ class UserTypeList(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
+@method_decorator(
+    ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMIT_RATE), name="dispatch"
+)
 class UserAuthApi(APIView):
     # auth user
     def post(self, request):
