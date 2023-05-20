@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 
 
 class BlogPostApi(APIView):
+    # add new blog post
     @method_permission_classes([IsLogginedUser, IsAuthor])
     def post(self, request):
         data = request.data.copy()
@@ -22,6 +23,7 @@ class BlogPostApi(APIView):
         blog_post_serializer.save()
         return Response(blog_post_serializer.data, status=status.HTTP_201_CREATED)
 
+    # get single blog post data
     def get(self, request, blog_post_id):
         try:
             blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id)
@@ -35,6 +37,7 @@ class BlogPostApi(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    # update single blog post
     @method_permission_classes([IsLogginedUser])
     def put(self, request, blog_post_id):
         blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id)
@@ -51,6 +54,7 @@ class BlogPostApi(APIView):
 
         return Response(blog_post_serializer, status=status.HTTP_200_OK)
 
+    # delete blog post data
     @method_permission_classes([IsLogginedUser, IsAuthor])
     def delete(self, request, blog_post_id):
         blog_post_obj = BlogPostModel.objects.get(pk=blog_post_id, user=request.user.pk)
@@ -59,6 +63,7 @@ class BlogPostApi(APIView):
 
 
 class BlogPostListApi(APIView):
+    # get all blog post
     @method_permission_classes([IsLogginedUser])
     def get(self, request):
         blog_post_obj = BlogPostModel.objects.all().order_by("id")
